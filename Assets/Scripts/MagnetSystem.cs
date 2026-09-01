@@ -46,7 +46,7 @@ public class MagnetSystem : MonoBehaviour
                             if (effectAnimator != null) effectAnimator.Play(0); // Animasyonu baştan oynat
                         }
                     }
-                    ConsumeEnergy();
+                    //ConsumeEnergy();
                 }
                 else
                 {
@@ -72,7 +72,7 @@ public class MagnetSystem : MonoBehaviour
     private void AttractAsteroids()
     {
         Vector2 origin = magnetPoint.position;
-        // Kamyonun öne bakan yönü (MagnetPoint'in yeşil oku / sol yönü)
+
         Vector2 facingDirection = transform.up; 
 
         Collider2D[] asteroids = Physics2D.OverlapCircleAll(origin, attractionRadius, asteroidLayer);
@@ -82,35 +82,32 @@ public class MagnetSystem : MonoBehaviour
             Rigidbody2D asteroidRb = asteroid.GetComponent<Rigidbody2D>();
             if (asteroidRb != null)
             {
-                // MagnetPoint'ten asteroide olan vektör
+
                 Vector2 dirToAsteroid = (asteroidRb.position - origin).normalized;
                 
-                // Kepçenin baktığı yön ile asteroid arasındaki gerçek açı
+
                 float angle = Vector2.Angle(facingDirection, dirToAsteroid);
 
                 if (angle <= viewAngle / 2f)
                 {
-                    // Çekim Yönü: Asteroid'den doğrudan magnetPoint'e
+
                     Vector2 pullDirection = (origin - asteroidRb.position).normalized;
-                    
-                    // İtmeyi ve kontrolden çıkmayı engellemek için doğrudan AddForce yerine yumuşak çekim
                     asteroidRb.AddForce(pullDirection * attractionForce, ForceMode2D.Force);
                 }
             }
         }
     }
 
-    private void ConsumeEnergy()
+   /* private void ConsumeEnergy()
     {
         currentEnergy -= Time.deltaTime;
         currentEnergy = Mathf.Clamp(currentEnergy, 0f, maxEnergy);
         
-        // UI güncellemesi için event tetikle
+     
         OnEnergyChanged?.Invoke(currentEnergy, maxEnergy);
-    }
+    }*/
     private void OnDrawGizmosSelected()
     {
-        // Gizmos artık gerçek çekim alanının tam ÜSTÜNDE görünecek
         Vector3 origin = magnetPoint != null ? magnetPoint.position : transform.position;
         Vector3 facing = transform.up; 
 

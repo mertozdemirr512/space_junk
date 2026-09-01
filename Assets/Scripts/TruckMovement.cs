@@ -7,6 +7,7 @@ public class TruckMovement: MonoBehaviour
    [SerializeField] private float moveSpeed = 3f;
    [SerializeField] private float turnSpeed = 0.3f;
    [SerializeField] private float reverseSpeedMultiplier = 0.3f;
+   [SerializeField] private Vector2 centerOfMassOffset = new Vector2(0f, -0.8f);
    public GameObject exhaustFlame;
    public GameObject magnetEffect;
    private float moveInput;
@@ -19,6 +20,8 @@ public class TruckMovement: MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         rb.gravityScale = 0f;
+
+        rb.centerOfMass = centerOfMassOffset;
         if (exhaustFlame) exhaustFlame.SetActive(false);
         if (magnetEffect) magnetEffect.SetActive(false);
     }

@@ -30,6 +30,10 @@ public class Asteroid : MonoBehaviour
             float randomRotation = (Random.value > 0.5f) ? speed : -speed;
             rb.angularVelocity = randomRotation;   
         }
+        if (!IsVisibleToCamera())
+        {
+            RespawnFromRandomEdge();
+        }
 
     }
 
@@ -117,8 +121,6 @@ public class Asteroid : MonoBehaviour
             float entrySpeed = isSmall ? Random.Range(2f, 4f) : Random.Range(1.5f, 3f);
             rb.velocity = pushDirection * entrySpeed;
         }
-
-        // Tekrar ekrana tam girip onaylanana kadar tetiklenmeyi durdur
         onGameScreen = false;
     }
 
