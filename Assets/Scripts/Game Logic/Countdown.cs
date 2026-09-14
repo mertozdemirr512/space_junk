@@ -6,6 +6,15 @@ using Unity.VisualScripting;
 
 public class Countdown : MonoBehaviour
 {
+
+    private void Start()
+    {
+        if (LevelManager.Instance != null && LevelManager.Instance.CurrentLevelData != null)
+        {
+            _elapsedTime = LevelManager.Instance.CurrentLevelData.timeLimit;
+        }
+    }
+        
     [SerializeField] TextMeshProUGUI timerText;
     [SerializeField] private float _elapsedTime = 90f;
         void Update()

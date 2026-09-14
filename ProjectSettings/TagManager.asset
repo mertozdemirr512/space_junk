@@ -6,15 +6,16 @@ TagManager:
   tags:
   - Asteroid
   - Asteroid_Small
+  - Pyramid
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Truck
   - Water
   - UI
   - Asteroid
-  - 
+  - Barrier
   - 
   - 
   - 

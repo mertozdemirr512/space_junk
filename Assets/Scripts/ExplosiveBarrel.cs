@@ -12,6 +12,10 @@ public class ExplosiveBarrel : MonoBehaviour
     [Header("Effects")]
     [SerializeField] private GameObject explosionEffectPrefab; // Varsa patlama görsel/partikül efekti
 
+    [Header("Camera Shake Settings")]
+    [SerializeField] private float shakeDuration = 0.25f; // Ekran sallanma süresi
+    [SerializeField] private float shakeMagnitude = 0.35f; // Ekran sallanma şiddeti
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         // Çarpan obje Asteroid mi kontrol et
@@ -19,52 +23,55 @@ public class ExplosiveBarrel : MonoBehaviour
         {
             Asteroid asteroid = collision.gameObject.GetComponent<Asteroid>();
 
-            // Çarpan asteroit var ise ve BÜYÜK ise patlamayı tetikle
+            // Çarpan asteroit var ise patlamayı tetikle
             Explode(collision.gameObject);
-            
         }
     }
 
     private void Explode(GameObject bigAsteroid)
     {
+        // Kamyon/Launcher tutulan asteroiti patlatıyorsa launcher'ı sıfırla
+        AsteroidLauncher launcher = FindObjectOfType<AsteroidLauncher>();
+        if (launcher != null)
+        {
+            launcher.ResetLauncher();
+        }
+
         // Patlamanın gerçekleştiği noktayı (varilin mevcut konumunu) referans olarak alıyoruz.
         Vector3 explosionPosition = transform.position;
 
-        // 1. KÜÇÜK ASTEROİTLERİN DOĞURULMASI (SPAWN)
-        // Atanmış bir küçük asteroid prefab'ı olup olmadığını kontrol ederek NullReference hatasını önlüyoruz.
+        // 1. KAMERA SALLANMA EFEKTİ (CAMERA SHAKE)
+        if (CameraShake.Instance != null)
+        {
+            CameraShake.Instance.Shake(shakeDuration, shakeMagnitude);
+        }
+
+        // 2. KÜÇÜK ASTEROİTLERİN DOĞURULMASI (SPAWN)
         if (smallAsteroidPrefab != null)
         {
-            // Doğacak 2 küçük asteroid için zıt yönlerde (Çapraz: Sağ-Üst ve Sol-Alt) offset pozisyonları hesaplıyoruz.
-            // Bu işlem, yeni objelerin birbiriyle üst üste binip çakışmasını (collision glitch) engeller.
             Vector3 pos1 = explosionPosition + new Vector3(spawnOffset, spawnOffset, 0);
             Vector3 pos2 = explosionPosition + new Vector3(-spawnOffset, -spawnOffset, 0);
 
-            // Küçük asteroid objelerini sahnede oluşturuyoruz.
             GameObject small1 = Instantiate(smallAsteroidPrefab, pos1, Quaternion.identity);
             GameObject small2 = Instantiate(smallAsteroidPrefab, pos2, Quaternion.identity);
 
-            // Fizik motoru üzerinden fırlama hareketi verebilmek için her iki objenin Rigidbody2D bileşenlerini alıyoruz.
             Rigidbody2D rb1 = small1.GetComponent<Rigidbody2D>();
             Rigidbody2D rb2 = small2.GetComponent<Rigidbody2D>();
 
-            // Normalize edilmiş yön vektörleri ile objelere patlama anında anlık (Impulse) itme kuvveti uyguluyoruz.
             if (rb1 != null) rb1.AddForce(new Vector2(1, 1).normalized * explosionForce, ForceMode2D.Impulse);
             if (rb2 != null) rb2.AddForce(new Vector2(-1, -1).normalized * explosionForce, ForceMode2D.Impulse);
         }
 
-        // 2. PATLAMA GÖRSEL EFEKTİ (VFX)
-        // Eğer görsel efekt prefab'ı atanmışsa patlama konumunda bir örneğini oluşturuyoruz.
+        // 3. PATLAMA GÖRSEL EFEKTİ (VFX)
         if (explosionEffectPrefab != null)
         {
             Instantiate(explosionEffectPrefab, explosionPosition, Quaternion.identity);
         }
 
-        // Konsola bilgilendirme mesajı basarak patlama mantığının çalıştığını doğruluyoruz.
-        Debug.Log("Varil patladı! Büyük asteroit bölündü.");
+        Debug.Log("Varil patladı! Büyük asteroit bölündü ve launcher resetlendi.");
 
-        // 3. BELLEK VE NESNE TEMİZLİĞİ (CLEANUP)
-        // Çarpan büyük asteroidi ve patlayan varil objesini sahneden kaldırarak bellek sızıntısını önlüyoruz.
+        // 4. BELLEK VE NESNE TEMİZLİĞİ (CLEANUP)
         Destroy(bigAsteroid);
         Destroy(gameObject);
-}
+    }
 }

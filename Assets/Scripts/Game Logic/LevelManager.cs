@@ -1,42 +1,106 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-/*public class LevelManager : MonoBehaviour
+public class LevelManager : MonoBehaviour
 {
-    public static LevelManager Instance {get; private set;}
+    public static LevelManager Instance { get; private set; }
 
-    [Header("Current Level Data")]
+    [Header("Level Data Configuration")]
     [SerializeField] private LevelData currentLevelData;
 
-    [Header("Spawn Settings")]
-    [SerializeField] private Transform pyramidSpawnPoint;
-    [SerializeField] private Vector2 spawnAreaMin = new Vector2(-7f,-3.5f);
-    [SerializeField] private Vector2 spawnAreaMax = new Vector2(7f,3.5f);
-    private int currentScore = 0;
-    void Awake()
+    [Header("Scene References (Opsiyonel)")]
+    [SerializeField] private GameObject pyramidInScene;
+
+    public LevelData CurrentLevelData => currentLevelData;
+
+    private void Awake()
     {
-        Instance = this;
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     private void Start()
     {
-        if(currentLevelData != null)
+        if (currentLevelData != null)
         {
-            SetupLevel();
+            SetupSceneLevel();
         }
-        else 
+        else
         {
-            Debug.LogError("[LEVEL MANAGER] LevelData scriptable object is not assigned.");
+            Debug.LogError("[LevelManager] Current Level Data atanmamış!");
         }
     }
 
-    private void SetupLevel()
+    private void SetupSceneLevel()
     {
-        if(currentLevelData.pyramidPrefab != null)
+        GoalGate.score = 0; // Her level başında skoru sıfırla
+
+        if (pyramidInScene == null)
         {
-            vector
+            pyramidInScene = GameObject.FindWithTag("Pyramid");
+        }
+
+        if (pyramidInScene != null)
+        {
+            GoalGate[] gates = pyramidInScene.GetComponentsInChildren<GoalGate>();
+            for (int i = 0; i < gates.Length && i < currentLevelData.gateStates.Length; i++)
+            {
+                gates[i].SetGateState(currentLevelData.gateStates[i]);
+            }
+        }
+
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.ChangeGameState(GameState.Gameplay);
         }
     }
-}*/
+
+    // GoalGate tarafından her skor yapıldığında çağrılacak metot
+    public void CheckScoreGoal()
+    {
+        if (currentLevelData == null || GameManager.Instance == null) return;
+
+        if (GoalGate.score >= currentLevelData.requiredScoreGoal)
+        {
+            GameManager.Instance.OnLevelWin();
+        }
+    }
+
+    public void LoadNextLevel()
+        {
+            // Zaman акışını normale döndür (Win durumunda dondurulmuş olabilir)
+            Time.timeScale = 1f;
+
+            int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+            int nextSceneIndex = currentSceneIndex + 1;
+
+            Debug.Log($"[LEVEL SYSTEM] Şu anki Sahne Index: {currentSceneIndex} | Hedef Sahne Index: {nextSceneIndex} | Toplam Sahne Sayısı: {SceneManager.sceneCountInBuildSettings}");
+
+            // Build Settings'te bir sonraki sahne var mı kontrol et
+            if (nextSceneIndex < SceneManager.sceneCountInBuildSettings)
+            {
+                SceneManager.LoadScene(nextSceneIndex);
+            }
+            else
+            {
+                Debug.Log("[LEVEL SYSTEM] Tüm seviyeler tamamlandı! Ana menüye dönülüyor.");
+                SceneManager.LoadScene(0); // Sahne 0 (Ana Menü)
+            }
+        }
+
+        // Mevcut seviyeyi yeniden başlatır (Retry / Restart Butonu İçin)
+        public void RestartCurrentLevel()
+        {
+            Time.timeScale = 1f;
+            int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+            SceneManager.LoadScene(currentSceneIndex);
+        }
+    
+    
+}

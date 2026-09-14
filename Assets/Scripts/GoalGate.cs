@@ -4,30 +4,32 @@ using UnityEngine;
 
 public class GoalGate : MonoBehaviour
 {
-    public enum GateState{Open, Closed, SmallOnly};
+    public enum GateState { Open, Closed, SmallOnly };
+    public enum GateOrientation { Auto, Top, Bottom, Left, Right };
 
-    [SerializeField] GateState currentState = GateState.Open;
-    public Sprite openSprite;
-    public Sprite closedSprite;
-    public Sprite smallOnlySprite;
+    [Header("Gate Settings")]
+    [Tooltip("Kapının yönü. Eğer her kapının Z rotasyonu piramidin ortasına bakacak şekilde ayarlıysa Auto tutabilirsiniz.")]
+    [SerializeField] private GateOrientation orientation = GateOrientation.Auto;
+
+    [Tooltip("Kapının merkezinden piramidin boğazına (içeriye) doğru olan mesafe.")]
+    [SerializeField] private float mouthOffset = 1.2f;
+
+    [SerializeField] private GateState currentState = GateState.Open;
     public static float score = 0;
 
-    private SpriteRenderer spriteRenderer;
+    private Animator animator;
     private Collider2D gateCollider;
-
 
     private void Awake()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
         gateCollider = GetComponent<Collider2D>();
     }
 
     private void Start()
     {
         UpdateGateState();
-     
     }
-
 
     public void SetGateState(GateState newState)
     {
@@ -37,26 +39,19 @@ public class GoalGate : MonoBehaviour
 
     private void UpdateGateState()
     {   
-        if (spriteRenderer == null) return;
+        if (animator == null) return;
+
+        animator.SetInteger("GateState", (int)currentState);
 
         switch (currentState)
         {
             case GateState.Open:
-                spriteRenderer.enabled = (openSprite != null);
-                spriteRenderer.sprite = openSprite;
+            case GateState.SmallOnly:
                 if (gateCollider != null) gateCollider.enabled = true;
                 break;
 
             case GateState.Closed:
-                spriteRenderer.enabled = (closedSprite != null);
-                spriteRenderer.sprite = closedSprite;
                 if (gateCollider != null) gateCollider.enabled = false;
-                break;
-
-            case GateState.SmallOnly:
-                spriteRenderer.enabled = (smallOnlySprite != null);
-                spriteRenderer.sprite = smallOnlySprite;
-                if (gateCollider != null) gateCollider.enabled = true;
                 break;
         }
     }
@@ -71,38 +66,53 @@ public class GoalGate : MonoBehaviour
 
             if (asteroid != null)
             {
-                
                 if (currentState == GateState.SmallOnly && !asteroid.IsSmall)
                 {
                     Debug.Log("Bu kapı sadece küçük asteroidleri kabul eder!");
                     return;
                 }
 
-
-                OnAsteroidScored(other.gameObject);
+                asteroid.EnterPyramidGate(GetTargetMouthPosition());
             }
         }
     }
 
-    private void OnAsteroidScored(GameObject asteroidObj)
+    /// <summary>
+    /// Piramit ve Kapı döndükçe kırmızı noktanın lokal rotasyona göre dönmesini sağlar.
+    /// </summary>
+    public Vector3 GetTargetMouthPosition()
     {
-        if(asteroidObj.CompareTag("Asteroid_Small"))
+        Vector2 localDirection = Vector2.zero;
+
+        // Auto modunda kapının objesel lokal yönüne göre offset belirleme
+        switch (orientation)
         {
-            Debug.Log("A small asteroid made it");
-            score+=0.5f;
-            Destroy(asteroidObj);
-        }
-        else
-        {
-            Debug.Log("An asteroid made it");
-            score++;
-            Destroy(asteroidObj);   
+            case GateOrientation.Top:
+                localDirection = Vector2.down; // Üst kapı -> Lokal aşağı kayar
+                break;
+            case GateOrientation.Bottom:
+                localDirection = Vector2.up; // Alt kapı -> Lokal yukarı kayar
+                break;
+            case GateOrientation.Left:
+                localDirection = Vector2.right; // Sol kapı -> Lokal sağa kayar
+                break;
+            case GateOrientation.Right:
+                localDirection = Vector2.left; // Sağ kapı -> Lokal sola kayar
+                break;
+            case GateOrientation.Auto:
+                // Kapının kendi Z rotasyonu sağa/sola/yukarıya bakıyorsa
+                // -transform.up doğrudan piramidin merkezine bakar
+                return transform.position - (transform.up * mouthOffset);
         }
 
+        // Lokal yönü dönmüş olan Dünya Yönüne (World Space) çeviriyoruz
+        Vector3 worldOffset = transform.TransformDirection(localDirection * mouthOffset);
+        return transform.position + worldOffset;
+    }
 
-        if(GameManager.Instance != null)
-        {
-            GameManager.Instance.CheckScoreGoal();
-        }
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(GetTargetMouthPosition(), 0.07f);
     }
 }

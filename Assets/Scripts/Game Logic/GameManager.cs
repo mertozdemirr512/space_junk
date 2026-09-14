@@ -2,73 +2,82 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-    public enum GameState
-    {
-        Win,
-        Loss,
-        Gameplay,
-        Menu
-    }
+public enum GameState
+{
+    Win,
+    Loss,
+    Gameplay,
+    Menu
+}
+
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance{get; private set;}
-    [SerializeField] private float scoreGoal;
-
-    void Awake()
-    {
-        Instance = this;
-    }
+    public static GameManager Instance { get; private set; }
+    
+    [Header("UI Panels")]
+    [SerializeField] private GameObject winPanel;
+    [SerializeField] private GameObject lossPanel;
 
     [Header("Game State")]
     public GameState currentState;
-    void Start()
+
+    private void Awake()
     {
-        GoalGate.score=0;
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject); //zaten var olan bir game manager varsa yenisini silsin
+        }
+    }
+
+    private void Start()
+    {
+        GoalGate.score = 0;
         ChangeGameState(GameState.Gameplay);
+
+     
+        if (winPanel) winPanel.SetActive(false);
+        if (lossPanel) lossPanel.SetActive(false);
     }
     
-    void ChangeGameState(GameState newState)
+    public void ChangeGameState(GameState newState)
     {
         currentState = newState;
 
-        switch(currentState)
+    switch(currentState)
         {
-            case(GameState.Win):
-            break;
+            case GameState.Win:
+                Time.timeScale = 0f;
+                if (winPanel != null) winPanel.SetActive(true);
+                Debug.Log("Level Accomplished"); //
+                break;
 
-            case(GameState.Loss):
-            break;
+            case GameState.Loss:
+                Time.timeScale = 0f;
+                if (lossPanel != null) lossPanel.SetActive(true);
+                Debug.Log("Level Failed");
+                break;
 
-            case(GameState.Gameplay):
-            break;
+            case GameState.Gameplay:
+                Time.timeScale = 1f;
+                break;
 
-            case(GameState.Menu):
-            break;
-
+            case GameState.Menu:
+                Time.timeScale = 1f;
+                break;
+            }
         }
-        
-    }
-    public void CheckScoreGoal()
-    {
-        if(currentState != GameState.Gameplay) return;
-
-        if(GoalGate.score >= scoreGoal)
-        {
-            OnLevelWin();
-        }
-    }
 
     public void OnLevelFail()
     {
-        Debug.Log("Level Failed");
         ChangeGameState(GameState.Loss);
     }
 
     public void OnLevelWin()
     {
-        Debug.Log("Level Accomplished");
         ChangeGameState(GameState.Win);
     }
-
-
 }

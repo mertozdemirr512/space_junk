@@ -80,10 +80,10 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 2.88, y: 0.96}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!61 &6043831524155089113
@@ -122,8 +122,8 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 1}
+    oldSize: {x: 9, y: 3}
+    newSize: {x: 2.88, y: 0.96}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -143,10 +143,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8a45cc2223744703bbf0651b580168b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  orientation: 0
+  mouthOffset: 1.2
   currentState: 1
-  openSprite: {fileID: 21300000, guid: 6b9c359bccc5e4e51bf576b6d12ae7b8, type: 3}
-  closedSprite: {fileID: 21300000, guid: a5abd6fe8282a4b9fb51ae40e09561ab, type: 3}
-  smallOnlySprite: {fileID: 21300000, guid: 4e3adebff14eb4ee68423ee92ec081d1, type: 3}
 --- !u!1 &2293046148302031221
 GameObject:
   m_ObjectHideFlags: 0
@@ -158,9 +157,10 @@ GameObject:
   - component: {fileID: 2520789999190489211}
   - component: {fileID: 903176042679143510}
   - component: {fileID: 2748815168508263563}
+  - component: {fileID: 7473511865683072151}
   m_Layer: 0
   m_Name: Pyramid
-  m_TagString: Untagged
+  m_TagString: Pyramid
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -175,7 +175,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -2.27, y: -2.41, z: -0.024615025}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2661647296677045676}
@@ -266,6 +266,22 @@ PolygonCollider2D:
       - {x: 0.9875411, y: -0.42236698}
       - {x: 0.9965608, y: 0.4269644}
   m_UseDelaunayMesh: 0
+--- !u!114 &7473511865683072151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2293046148302031221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4225680819ecf4b9d8ed450347950756, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movementType: 1
+  rotationSpeed: 1
+  patrolOffset: {x: 3, y: 0, z: 0}
+  patrolSpeed: 2
 --- !u!1 &3543352682139567154
 GameObject:
   m_ObjectHideFlags: 0
@@ -344,7 +360,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.96, y: 0.96}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -430,10 +446,10 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 2.88, y: 0.96}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!61 &6254238991359050119
@@ -472,8 +488,8 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 1}
+    oldSize: {x: 9, y: 3}
+    newSize: {x: 2.88, y: 0.96}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -493,10 +509,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8a45cc2223744703bbf0651b580168b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  orientation: 0
+  mouthOffset: 1.2
   currentState: 1
-  openSprite: {fileID: 21300000, guid: 694022ee4105e45729050289d303cc30, type: 3}
-  closedSprite: {fileID: 21300000, guid: 61a24723843b64b8380f434db7389c8a, type: 3}
-  smallOnlySprite: {fileID: 21300000, guid: 1f1bfc0cbb0ac4408ad525da18bd8382, type: 3}
 --- !u!1 &7484236132876380566
 GameObject:
   m_ObjectHideFlags: 0
@@ -577,10 +592,10 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 2.88, y: 0.96}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!61 &6289873990908398023
@@ -619,8 +634,8 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 1}
+    oldSize: {x: 2.88, y: 0.96}
+    newSize: {x: 2.88, y: 0.96}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -640,10 +655,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8a45cc2223744703bbf0651b580168b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  orientation: 0
+  mouthOffset: 1.2
   currentState: 1
-  openSprite: {fileID: 21300000, guid: f999696b8858243dd963d91301ccd414, type: 3}
-  closedSprite: {fileID: 21300000, guid: c2c4c9bee7e584e1e961917297357675, type: 3}
-  smallOnlySprite: {fileID: 21300000, guid: cada3dbc555594608bdbf61f143aaa14, type: 3}
 --- !u!1 &8942910963142208022
 GameObject:
   m_ObjectHideFlags: 0
@@ -724,10 +738,10 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 2.88, y: 0.96}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!61 &3938739024838295915
@@ -766,8 +780,8 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 1}
+    oldSize: {x: 2.88, y: 0.96}
+    newSize: {x: 2.88, y: 0.96}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -787,7 +801,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8a45cc2223744703bbf0651b580168b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  orientation: 0
+  mouthOffset: 1.2
   currentState: 2
-  openSprite: {fileID: 21300000, guid: 8c87076b7467243758f33bd141110deb, type: 3}
-  closedSprite: {fileID: 21300000, guid: 3a3bd8fd309aa4b1da4a90ced182f4fe, type: 3}
-  smallOnlySprite: {fileID: 21300000, guid: 6e4f0deb84e2a439b9b2973581995c0f, type: 3}
