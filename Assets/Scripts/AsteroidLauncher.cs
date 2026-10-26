@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class AsteroidLauncher : MonoBehaviour
 {
@@ -7,6 +9,14 @@ public class AsteroidLauncher : MonoBehaviour
     [SerializeField] private Transform arrowTransform;
     [SerializeField] private LayerMask asteroidLayer;
     [SerializeField] private Rigidbody2D truckRb;
+
+    [Header("Cooldown Radial UI")]
+    [Tooltip("Dairesel Cooldown görseli (Image Type: Filled, Fill Method: Radial 360)")]
+    [SerializeField] private Image cooldownRadialFill;
+    [Tooltip("Cooldown süresini gösteren yazı (TMP)")]
+    [SerializeField] private TMP_Text cooldownText;
+    [Tooltip("Cooldown UI'ını kapsayan Obje (Kapanıp açılması için)")]
+    [SerializeField] private GameObject cooldownUIParent;
 
     [Header("Controls")]
     [SerializeField] private KeyCode actionKey = KeyCode.Space;
@@ -22,7 +32,7 @@ public class AsteroidLauncher : MonoBehaviour
     [SerializeField] private float maxHoldTime = 5f; // Belli süre atılmazsa otomatik sıfırlanır
     private float currentHoldTimer = 0f;
 
-    // Cooldown Süresi ve Zaman Takibi
+    [Header("Cooldown Settings")]
     [SerializeField] private float cooldownDuration = 8f;
     private float nextLaunchTime = 0f;
 
@@ -47,6 +57,9 @@ public class AsteroidLauncher : MonoBehaviour
 
     private void Update()
     {
+        // Cooldown UI Güncellemesi
+        UpdateCooldownUI();
+
         // GÜVENLİK: Eğer kilitliysek ama tutulan asteroit yok edildiyse anında sıfırla
         if (isLocked && caughtAsteroid == null)
         {
@@ -102,6 +115,32 @@ public class AsteroidLauncher : MonoBehaviour
             {
                 LaunchAsteroid();
             }
+        }
+    }
+
+    private void UpdateCooldownUI()
+    {
+        if (Time.time < nextLaunchTime)
+        {
+            if (cooldownUIParent != null && !cooldownUIParent.activeSelf)
+                cooldownUIParent.SetActive(true);
+
+            float remainingTime = nextLaunchTime - Time.time;
+            float fillRatio = remainingTime / cooldownDuration;
+
+            // Saat yönünde dairesel boşalma (Radial 360)
+            if (cooldownRadialFill != null)
+                cooldownRadialFill.fillAmount = fillRatio;
+
+            if (cooldownText != null)
+                cooldownText.text = remainingTime.ToString("F1") + "s";
+        }
+        else
+        {
+            // Bekleme süresi bitti - UI Gizle
+            if (cooldownRadialFill != null) cooldownRadialFill.fillAmount = 0f;
+            if (cooldownUIParent != null && cooldownUIParent.activeSelf)
+                cooldownUIParent.SetActive(false);
         }
     }
 
@@ -167,7 +206,6 @@ public class AsteroidLauncher : MonoBehaviour
     /// </summary>
     public void ResetLauncher()
     {
-        // Eğer tutulan bir asteroit varsa fiziğini tekrar aktif et (hareket edebilir yap)
         if (caughtAsteroid != null)
         {
             caughtAsteroid.isKinematic = false;

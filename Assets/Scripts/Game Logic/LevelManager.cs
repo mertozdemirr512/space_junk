@@ -39,7 +39,7 @@ public class LevelManager : MonoBehaviour
 
     private void SetupSceneLevel()
     {
-        GoalGate.score = 0; // Her level başında skoru sıfırla
+        GoalGate.score = 0;
 
         if (pyramidInScene == null)
         {
@@ -61,46 +61,65 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    // GoalGate tarafından her skor yapıldığında çağrılacak metot
     public void CheckScoreGoal()
     {
         if (currentLevelData == null || GameManager.Instance == null) return;
 
         if (GoalGate.score >= currentLevelData.requiredScoreGoal)
         {
+            UnlockNextLevel();
             GameManager.Instance.OnLevelWin();
         }
     }
 
+    public void ResumeGame()
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.ChangeGameState(GameState.Gameplay);
+        }
+    }
+
+    private void UnlockNextLevel()
+    {
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        int highestUnlockedLevel = PlayerPrefs.GetInt("UnlockedLevel", 1);
+
+        if (currentSceneIndex >= highestUnlockedLevel)
+        {
+            PlayerPrefs.SetInt("UnlockedLevel", currentSceneIndex + 1);
+            PlayerPrefs.Save();
+        }
+    }
+
     public void LoadNextLevel()
+    {
+        Time.timeScale = 1f;
+
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        int nextSceneIndex = currentSceneIndex + 1;
+
+        if (nextSceneIndex < SceneManager.sceneCountInBuildSettings)
         {
-            // Zaman акışını normale döndür (Win durumunda dondurulmuş olabilir)
-            Time.timeScale = 1f;
-
-            int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-            int nextSceneIndex = currentSceneIndex + 1;
-
-            Debug.Log($"[LEVEL SYSTEM] Şu anki Sahne Index: {currentSceneIndex} | Hedef Sahne Index: {nextSceneIndex} | Toplam Sahne Sayısı: {SceneManager.sceneCountInBuildSettings}");
-
-            // Build Settings'te bir sonraki sahne var mı kontrol et
-            if (nextSceneIndex < SceneManager.sceneCountInBuildSettings)
-            {
-                SceneManager.LoadScene(nextSceneIndex);
-            }
-            else
-            {
-                Debug.Log("[LEVEL SYSTEM] Tüm seviyeler tamamlandı! Ana menüye dönülüyor.");
-                SceneManager.LoadScene(0); // Sahne 0 (Ana Menü)
-            }
+            SceneManager.LoadScene(nextSceneIndex);
         }
-
-        // Mevcut seviyeyi yeniden başlatır (Retry / Restart Butonu İçin)
-        public void RestartCurrentLevel()
+        else
         {
-            Time.timeScale = 1f;
-            int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-            SceneManager.LoadScene(currentSceneIndex);
+            Debug.Log("[LEVEL SYSTEM] Tüm seviyeler tamamlandı! Ana menüye dönülüyor.");
+            GoToMainMenu();
         }
-    
-    
+    }
+
+    public void RestartCurrentLevel()
+    {
+        Time.timeScale = 1f;
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadScene(currentSceneIndex);
+    }
+
+    public void GoToMainMenu()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(0);
+    }
 }

@@ -3,7 +3,10 @@ guid: 0f8b2e95f74864d4188b83c41f81ecda
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - winPanel: {instanceID: 0}
+  - lossPanel: {instanceID: 0}
+  - pausePanel: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

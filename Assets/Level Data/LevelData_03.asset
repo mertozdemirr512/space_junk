@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b2bfe37d278c410e8e92c8c300e9bbd, type: 3}
   m_Name: LevelData_03
   m_EditorClassIdentifier: 
-  levelNumber: 2
+  levelNumber: 3
   timeLimit: 60
   requiredScoreGoal: 1.5
   gateStates: 00000000010000000200000001000000

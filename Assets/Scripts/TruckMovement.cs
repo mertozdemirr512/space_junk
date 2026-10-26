@@ -49,7 +49,7 @@ public class TruckMovement: MonoBehaviour
         {
             bool isMovingForward = moveInput > 0.05f; 
             exhaustFlame.SetActive(isMovingForward);
-        
+            
         }
     }
 
